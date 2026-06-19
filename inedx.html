@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Amoeba – Phoenix Market City</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --neon-green:  #00ff87;
+    --neon-cyan:   #00e5ff;
+    --neon-purple: #bf00ff;
+    --neon-gold:   #ffd700;
+    --bg:          #07080d;
+    --bg2:         #0d0f1a;
+    --card:        #111422;
+    --border:      rgba(0,229,255,.15);
+    --text:        #e8eaf0;
+    --muted:       rgba(232,234,240,.5);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PARTICLE CANVAS ── */
+  #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  /* ── WRAPPER ── */
+  .page { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 0 20px 48px; }
+
+  /* ── AMBIENT GLOWS ── */
+  .glow-top {
+    position: fixed; top: -120px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,229,255,.12) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .glow-bottom {
+    position: fixed; bottom: -100px; right: -80px;
+    width: 400px; height: 300px;
+    background: radial-gradient(ellipse, rgba(191,0,255,.1) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── HEADER BADGE ── */
+  .badge {
+    margin-top: 36px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px;
+    border: 1px solid rgba(0,255,135,.3);
+    border-radius: 100px;
+    background: rgba(0,255,135,.06);
+    font-size: 11px; font-weight: 600; letter-spacing: .12em;
+    color: var(--neon-green);
+    text-transform: uppercase;
+  }
+  .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--neon-green); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+  /* ── LOGO ── */
+  .logo-wrap {
+    margin-top: 28px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .logo-icon {
+    width: 68px; height: 68px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px; font-weight: 900; color: #fff;
+    box-shadow: 0 0 32px rgba(0,229,255,.35), 0 0 60px rgba(191,0,255,.2);
+  }
+  .logo-wordmark {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px; font-weight: 900; letter-spacing: .08em;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .logo-sub { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+
+  /* ── HERO ── */
+  .hero { margin-top: 36px; text-align: center; max-width: 360px; }
+  .hero-greeting {
+    font-size: 11px; font-weight: 600; letter-spacing: .2em;
+    color: var(--neon-cyan); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(26px, 7vw, 34px);
+    font-weight: 900; line-height: 1.15;
+    color: #fff;
+  }
+  .hero-title span {
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-desc {
+    margin-top: 14px; font-size: 14px; font-weight: 300; line-height: 1.7;
+    color: var(--muted); max-width: 300px; margin-left: auto; margin-right: auto;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    margin-top: 32px; width: 100%; max-width: 360px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    opacity: .25;
+  }
+
+  /* ── PRIMARY CTA ── */
+  .cta-primary {
+    margin-top: 32px; width: 100%; max-width: 360px;
+    display: flex; flex-direction: column; gap: 10px; align-items: center;
+  }
+  .btn-label {
+    font-size: 10px; font-weight: 600; letter-spacing: .15em;
+    color: var(--neon-green); text-transform: uppercase; opacity: .8;
+  }
+
+  .btn-main {
+    position: relative; width: 100%;
+    padding: 18px 24px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #00c96a 0%, #00e5ff 100%);
+    color: #04060e; font-family: 'Inter', sans-serif;
+    font-size: 16px; font-weight: 700; letter-spacing: .02em;
+    border: none; cursor: pointer; outline: none;
+    box-shadow: 0 0 28px rgba(0,255,135,.4), 0 0 60px rgba(0,255,135,.15), 0 8px 32px rgba(0,0,0,.5);
+    transition: transform .18s ease, box-shadow .18s ease;
+    text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px;
+    overflow: hidden;
+  }
+  .btn-main::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.25), transparent);
+    border-radius: inherit;
+  }
+  .btn-main:active, .btn-main:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 0 48px rgba(0,255,135,.6), 0 0 90px rgba(0,229,255,.25), 0 12px 40px rgba(0,0,0,.6);
+  }
+  .btn-main .icon { font-size: 20px; }
+  .btn-main-text { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+  .btn-main-title { font-size: 15px; font-weight: 700; }
+  .btn-main-hint { font-size: 11px; font-weight: 500; opacity: .7; }
+
+  /* ── SECONDARY BUTTONS ── */
+  .btn-stack { margin-top: 16px; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 12px; }
+
+  .btn-sec {
+    width: 100%; padding: 16px 22px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text); font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; outline: none;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 14px;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    position: relative; overflow: hidden;
+  }
+  .btn-sec::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(255,255,255,.03), transparent);
+  }
+  .btn-sec:active, .btn-sec:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,229,255,.5);
+    box-shadow: 0 0 20px rgba(0,229,255,.15), 0 6px 24px rgba(0,0,0,.4);
+  }
+  .btn-sec.instagram:hover, .btn-sec.instagram:active {
+    border-color: rgba(255,100,180,.5);
+    box-shadow: 0 0 20px rgba(255,100,180,.15), 0 6px 24px rgba(0,0,0,.4);
+  }
+  .btn-sec-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .icon-games { background: rgba(0,229,255,.12); }
+  .icon-insta  { background: rgba(255,60,150,.12); }
+  .btn-sec-text { display: flex; flex-direction: column; gap: 2px; }
+  .btn-sec-title { font-size: 14px; font-weight: 600; }
+  .btn-sec-hint  { font-size: 11px; font-weight: 400; color: var(--muted); }
+  .btn-sec-arrow { margin-left: auto; color: var(--muted); font-size: 16px; }
+
+  /* ── STATS STRIP ── */
+  .stats {
+    margin-top: 32px; width: 100%; max-width: 360px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 10px;
+    text-align: center;
+    transition: transform .18s ease;
+  }
+  .stat-card:active { transform: scale(.97); }
+  .stat-num {
+    font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 10px; font-weight: 500; color: var(--muted); margin-top: 4px; letter-spacing: .04em; }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 40px; text-align: center;
+    font-size: 11px; color: var(--muted); line-height: 1.8;
+  }
+  .footer strong { color: rgba(232,234,240,.8); }
+  .footer a { color: var(--neon-cyan); text-decoration: none; }
+
+  /* ── RIPPLE ── */
+  .ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    transform: scale(0); animation: ripple-anim .5s linear;
+    pointer-events: none;
+  }
+  @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="glow-top"></div>
+<div class="glow-bottom"></div>
+
+<div class="page">
+
+  <!-- Badge -->
+  <div class="badge"><span class="badge-dot"></span>Phoenix Market City · Mumbai</div>
+
+  <!-- Logo -->
+  <div class="logo-wrap">
+    <div class="logo-icon">A</div>
+    <div class="logo-wordmark">AMOEBA</div>
+    <div class="logo-sub">Sports Bar &amp; Entertainment</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <p class="hero-greeting">👋 You've arrived</p>
+    <h1 class="hero-title">Welcome to<br/><span>Amoeba,</span><br/>Phoenix Market City.</h1>
+    <p class="hero-desc">Games. Sports. Good vibes. We're glad you're here — tell the world about it.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Primary CTA -->
+  <div class="cta-primary">
+    <span class="btn-label">⭐ Leave us a review</span>
+    <a class="btn-main" href="https://www.google.com/search?sca_esv=d3072e3ed07299dd&sxsrf=ANbL-n7R2pm7bCNOjog6CQp9WvLZ-W_smg:1781847728904&si=AL3DRZFIhG6pAqfNLal55wUTwygCG0fClF3UxiOmgw9Hq7nbWQ4DVJoAX4oddorljDgKwMhP69TjDh9Srp53JxaOnQ12R0e7Hv0VYjdYrH8Pi9IMyB8p--IqzmH-aYAANdiL12r_kXPCIZWBMBjcMRNfqHb6F4-buQ%3D%3D&q=Amoeba+Sports+Bar+Reviews&sa=X&ved=2ahUKEwju87KHzJKVAxXDyDgGHYFcE1gQ0bkNegQISBAF&biw=1470&bih=923&dpr=2#lrd=0x3be7c87d6e276f49:0x1798bb223c64bdee,3,,,," target="_blank" rel="noopener" id="ctaMain">
+      <span class="icon">🌟</span>
+      <div class="btn-main-text">
+        <span class="btn-main-title">Share Your Experience</span>
+        <span class="btn-main-hint">Rate us on Google Maps</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Secondary Buttons -->
+  <div class="btn-stack">
+    <a class="btn-sec" href="https://www.hmleisure.com/sports-bar" target="_blank" rel="noopener">
+      <div class="btn-sec-icon icon-games">🎮</div>
+      <div class="btn-sec-text">
+        <span class="btn-sec-title">View Our Games &amp; Menu</span>
+        <span class="btn-sec-hint">Bowling · Arcade · Bar Bites</span>
+      </div>
+      <span class="btn-sec-arrow">›</span>
+    </a>
+    <a class="btn-sec instagram" href="https://www.instagram.com/amoebaentertainment/" target="_blank" rel="noopener">
+      <div class="btn-sec-icon icon-insta">📸</div>
+      <div class="btn-sec-text">
+        <span class="btn-sec-title">Follow Us on Instagram</span>
+        <span class="btn-sec-hint">@amoebaentertainment</span>
+      </div>
+      <span class="btn-sec-arrow">›</span>
+    </a>
+  </div>
+
+  <!-- Stats Strip -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-num">20+</div>
+      <div class="stat-label">Games &amp; Lanes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">4.2★</div>
+      <div class="stat-label">Google Rating</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">50+</div>
+      <div class="stat-label">Live Screens</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p><strong>Amoeba Sports Bar</strong> · Phoenix Market City</p>
+    <p>Kurla (W), Mumbai · Open Daily 12 PM – 12 AM</p>
+    <p style="margin-top:8px;font-size:10px;opacity:.5;">Tap · Play · Repeat</p>
+  </div>
+
+</div>
+
+<script>
+/* ── PARTICLE SYSTEM ── */
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  const N = 55;
+
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
+
+  const colors = ['rgba(0,229,255,', 'rgba(0,255,135,', 'rgba(191,0,255,', 'rgba(255,215,0,'];
+
+  for(let i=0;i<N;i++){
+    particles.push({
+      x: Math.random()*1200, y: Math.random()*1200,
+      r: Math.random()*1.8+.3,
+      dx: (Math.random()-.5)*.25,
+      dy: (Math.random()-.5)*.25,
+      o: Math.random()*.6+.1,
+      c: colors[Math.floor(Math.random()*colors.length)]
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.dx; p.y+=p.dy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.c+p.o+')';
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── RIPPLE EFFECT ── */
+document.querySelectorAll('.btn-main, .btn-sec').forEach(btn=>{
+  btn.addEventListener('pointerdown', function(e){
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = this.getBoundingClientRect();
+    const sz = Math.max(rect.width, rect.height);
+    r.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px`;
+    this.appendChild(r);
+    r.addEventListener('animationend', ()=>r.remove());
+  });
+});
+</script>
+</body>
+</html>
